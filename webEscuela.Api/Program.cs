@@ -27,6 +27,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // 🔹 INYECCIÓN DE DEPENDENCIAS
 // ======================
 
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 // Repositorios
 builder.Services.AddScoped<IRoleRepository<Role>, RoleRepository>();
 

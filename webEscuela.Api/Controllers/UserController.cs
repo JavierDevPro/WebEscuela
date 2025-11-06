@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using webEscuela.Application.DTOs;
 using webEscuela.Application.Interfaces;
@@ -6,6 +7,7 @@ namespace webEscuela.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserService _service;

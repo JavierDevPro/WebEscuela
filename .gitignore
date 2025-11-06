@@ -1,0 +1,19 @@
+# Archivos de compilación de .NET
+bin/
+obj/
+
+# Configuración de IDEs
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# Archivos de entorno y configuración local
+.env
+.appsettings.json
+appsettings.json
+
+# Logs
+*.log
+logs/

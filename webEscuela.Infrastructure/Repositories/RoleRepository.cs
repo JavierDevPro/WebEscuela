@@ -5,7 +5,7 @@ using webEscuela.Infrastructure.Data;
 
 namespace webEscuela.Infrastructure.Repositories;
 
-public class RoleRepository: IRoleRepository
+public class RoleRepository: IRoleRepository<Role>
 {
     private readonly AppDbContext _context;
     public RoleRepository(AppDbContext context)

@@ -3,6 +3,7 @@ using webEscuela.Application.Interfaces;
 using webEscuela.Application.Services;
 using webEscuela.Domain.Entities;
 using webEscuela.Domain.Interfaces;
+using webEscuela.Domain.Repositories;
 using webEscuela.Infrastructure.Data;
 using webEscuela.Infrastructure.Repositories;
 
@@ -29,6 +30,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+// ✅ Inyección de dependencias
+builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+
+
 // Repositorios
 builder.Services.AddScoped<IRoleRepository<Role>, RoleRepository>();
 

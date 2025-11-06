@@ -15,7 +15,7 @@ namespace webEscuela.Infrastructure.Repositories
         }
 
         public async Task<IEnumerable<User>> GetAllAsync() =>
-            await _context.users.Include(u => u.Role).ToListAsync();
+            await _context.Users.Include(u => u.Role).ToListAsync();
 
         public async Task<User?> GetByIdAsync(int id) =>
             await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Id == id);

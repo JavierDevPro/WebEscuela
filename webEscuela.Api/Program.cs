@@ -1,5 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using webEscuela.Application.Interfaces;
+using webEscuela.Application.Services;
+using webEscuela.Domain.Interfaces;
 using webEscuela.Infrastructure.Data;
+using webEscuela.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +16,10 @@ builder.Services.AddDbContext<AppDbContext>(
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();     
+
 
 var app = builder.Build();
 

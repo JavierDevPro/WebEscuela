@@ -18,10 +18,9 @@ namespace webEscuela.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> Get() => Ok(await _service.GetAllAsync());
 
-        [HttpGet("api/{id}")]
+        [HttpGet("{id}")]
         [Authorize]
         public async Task<IActionResult> GetById(int id)
         {
@@ -30,23 +29,20 @@ namespace webEscuela.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> Create(StudentCreateDto dto)
         {
             var result = await _service.CreateAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
 
-        [HttpPut("Update/{id}")]
-        [Authorize]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, StudentUpdateDto dto)
         {
             var ok = await _service.UpdateAsync(id, dto);
             return ok ? NoContent() : NotFound();
         }
 
-        [HttpDelete("Delete/{id}")]
-        [Authorize(Roles = "Admin")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var ok = await _service.DeleteAsync(id);

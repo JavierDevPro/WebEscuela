@@ -19,7 +19,41 @@ var builder = WebApplication.CreateBuilder(args);
 // ======================
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo 
+    { 
+        Title = "WebEscuela API", 
+        Version = "v1",
+        Description = "API para gestión escolar con autenticación JWT"
+    });
+
+    // 🔐 Configuración de autenticación Bearer (JWT)
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "Autenticación JWT usando el esquema Bearer.\n\n" +
+                      "Ejemplo: 'Bearer 12345abcdef'",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference 
+                { 
+                    Type = ReferenceType.SecurityScheme, 
+                    Id = "Bearer" 
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
 // ======================
 // 🔹 BASE DE DATOS
@@ -103,5 +137,6 @@ app.MapGet("/health", () => Results.Ok(new
         version = "1.0.0"
     }))
     .AllowAnonymous();
+
 
 app.Run();

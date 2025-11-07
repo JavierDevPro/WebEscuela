@@ -1,4 +1,7 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using webEscuela.Application.Interfaces;
 using webEscuela.Application.Services;
 using webEscuela.Domain.Entities;
@@ -25,6 +28,29 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connection, MySqlServerVersion.AutoDetect(connection)));
 
 // ======================
+// 🔹 CONFIGURACIÓN DE JWT
+// ======================
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ClockSkew = TimeSpan.Zero, // Sin margen de tiempo extra
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
+            )
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+// ======================
 // 🔹 INYECCIÓN DE DEPENDENCIAS
 // ======================
 
@@ -40,6 +66,9 @@ builder.Services.AddScoped<IRoleRepository<Role>, RoleRepository>();
 
 // Servicios de aplicación
 builder.Services.AddScoped<IRoleService, RoleService>();
+
+// Servicio Autenticacion
+builder.Services.AddScoped<AuthService>();
 
 // ======================
 // 🔹 CONSTRUCCIÓN DE LA APLICACIÓN
@@ -58,6 +87,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // Si luego agregas autenticación/autorización, colócalo aquí:
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

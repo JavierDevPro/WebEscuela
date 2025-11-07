@@ -1,0 +1,38 @@
+﻿# Carpetas de build y binarios
+**/bin/
+**/obj/
+**/out/
+**/publish/
+
+# Archivos de Visual Studio / Rider
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.cache
+*.DotSettings.user
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Node modules (si tienes frontend)
+**/node_modules/
+
+# Archivos de sistema
+**/.DS_Store
+**/Thumbs.db
+
+# Logs
+**/logs/
+*.log
+
+# IMPORTANTE: NO ignoramos appsettings.json
+# Lo manejaremos con variables de entorno

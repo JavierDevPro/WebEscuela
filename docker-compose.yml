@@ -1,0 +1,35 @@
+﻿version: '3.8'
+
+services:
+  webescuela-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: webescuela-backend
+    ports:
+      - "5000:8080"  # Puerto externo:interno
+    environment:
+      # Variables de entorno que sobrescriben appsettings.json
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      
+      # Connection String (se sobrescribe desde .env)
+      - ConnectionStrings__ConnectionDefault=${DB_CONNECTION_STRING}
+      
+      # JWT Configuration (se sobrescribe desde .env)
+      - Jwt__Key=${JWT_SECRET_KEY}
+      - Jwt__Issuer=${JWT_ISSUER}
+      - Jwt__Audience=${JWT_AUDIENCE}
+    
+    env_file:
+      - .env  # Archivo con variables sensibles (crear este archivo)
+    
+    restart: unless-stopped
+    
+    # Healthcheck (opcional pero recomendado)
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

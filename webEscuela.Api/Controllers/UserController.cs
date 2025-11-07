@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using webEscuela.Application.DTOs;
 using webEscuela.Application.Interfaces;
@@ -6,6 +7,7 @@ namespace webEscuela.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserService _service;
@@ -16,10 +18,12 @@ namespace webEscuela.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAll() =>
             Ok(await _service.GetAllAsync());
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetById(int id)
         {
             var user = await _service.GetByIdAsync(id);
@@ -27,6 +31,7 @@ namespace webEscuela.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(CreateUserDto dto)
         {
             var created = await _service.CreateAsync(dto);
@@ -34,6 +39,7 @@ namespace webEscuela.Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id, UpdateUserDto dto)
         {
             var updated = await _service.UpdateAsync(id, dto);
@@ -41,6 +47,7 @@ namespace webEscuela.Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var deleted = await _service.DeleteAsync(id);

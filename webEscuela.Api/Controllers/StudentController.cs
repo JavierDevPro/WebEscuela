@@ -7,7 +7,8 @@ using webEscuela.Application.Interfaces;
 namespace webEscuela.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/student")]
+    [Authorize]
     public class StudentsController : ControllerBase
     {
         private readonly IStudentService _service;
@@ -18,10 +19,12 @@ namespace webEscuela.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> Get() => Ok(await _service.GetAllAsync());
 
         [HttpGet("{id}")]
         [Authorize]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> GetById(int id)
         {
             var result = await _service.GetByIdAsync(id);
@@ -29,6 +32,7 @@ namespace webEscuela.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> Create(StudentCreateDto dto)
         {
             var result = await _service.CreateAsync(dto);
@@ -36,6 +40,7 @@ namespace webEscuela.Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> Update(int id, StudentUpdateDto dto)
         {
             var ok = await _service.UpdateAsync(id, dto);
@@ -43,6 +48,7 @@ namespace webEscuela.Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> Delete(int id)
         {
             var ok = await _service.DeleteAsync(id);

@@ -1,5 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using webEscuela.Application.Interfaces;
@@ -17,7 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 // ======================
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApi(); // solo una vez
+builder.Services.AddSwaggerGen();
 
 // ======================
 // 🔹 BASE DE DATOS
@@ -51,12 +53,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 // ======================
-// 🔹 INYECCIÓN DE DEPENDENCIAS
+//  INYECCIÓN DE DEPENDENCIAS
 // ======================
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
-// ✅ Inyección de dependencias
+//  Inyección de dependencias
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 
@@ -71,17 +73,19 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<AuthService>();
 
 // ======================
-// 🔹 CONSTRUCCIÓN DE LA APLICACIÓN
+//  CONSTRUCCIÓN DE LA APLICACIÓN
 // ======================
 var app = builder.Build();
 
 // ======================
-// 🔹 MIDDLEWARES
+//  MIDDLEWARES
 // ======================
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.MapOpenApi();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebEscuela API v1");
+    c.RoutePrefix = "api-docs"; // Se accederá en /api-docs
+});
 
 // HTTPS y controladores
 app.UseHttpsRedirection();

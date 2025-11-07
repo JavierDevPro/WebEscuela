@@ -92,4 +92,12 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.MapGet("/health", () => Results.Ok(new 
+    { 
+        status = "healthy", 
+        timestamp = DateTime.UtcNow,
+        version = "1.0.0"
+    }))
+    .AllowAnonymous();
+
 app.Run();

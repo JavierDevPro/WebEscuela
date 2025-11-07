@@ -1,7 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using webEscuela.Application.Interfaces;
@@ -19,6 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 // ======================
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo 
@@ -28,7 +28,7 @@ builder.Services.AddSwaggerGen(c =>
         Description = "API para gestión escolar con autenticación JWT"
     });
 
-    //  Configuración de autenticación Bearer (JWT)
+    // 🔐 Configuración de autenticación Bearer (JWT)
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "Autenticación JWT usando el esquema Bearer.\n\n" +
@@ -58,17 +58,18 @@ builder.Services.AddSwaggerGen(c =>
 // ======================
 //  CONFIGURACIÓN DE CORS
 // ======================
-var corsPolicyName = "AllowSpecificOrigins";
+
+var corsPolicyName = "AllowFrontend";
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        policy =>
-        {
-            policy.AllowAnyOrigin()
+    options.AddPolicy(name: corsPolicyName, policy =>
+    {
+        policy.WithOrigins("http://localhost:3000") // 👈 URL de tu frontend Next.js
               .AllowAnyHeader()
-              .AllowAnyMethod());// si el front envía cookies o auth headers
-        });
+              .AllowAnyMethod()
+              .AllowCredentials(); // si envías cookies o headers de auth
+    });
 });
 
 // ======================
@@ -108,18 +109,13 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
-//  Inyección de dependencias
+
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 
-
-// Repositorios
 builder.Services.AddScoped<IRoleRepository<Role>, RoleRepository>();
-
-// Servicios de aplicación
 builder.Services.AddScoped<IRoleService, RoleService>();
 
-// Servicio Autenticacion
 builder.Services.AddScoped<AuthService>();
 
 // ======================
@@ -137,25 +133,23 @@ app.UseSwaggerUI(c =>
     c.RoutePrefix = "api-docs"; // Se accederá en /api-docs
 });
 
-// HTTPS y controladores
 app.UseHttpsRedirection();
 
-app.UseCors("AllowAll");
+// ⚠️ Importante: CORS debe ir antes de Authentication/Authorization
+app.UseCors(corsPolicyName);
 
-// Si luego agregas autenticación/autorización, colócalo aquí:
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
+// Endpoint de prueba
 app.MapGet("/health", () => Results.Ok(new 
-    { 
-        status = "healthy", 
-        timestamp = DateTime.UtcNow,
-        version = "1.0.0"
-    }))
-    .AllowAnonymous();
-
+{ 
+    status = "healthy", 
+    timestamp = DateTime.UtcNow,
+    version = "1.0.0"
+}))
+.AllowAnonymous();
 
 app.Run();
-

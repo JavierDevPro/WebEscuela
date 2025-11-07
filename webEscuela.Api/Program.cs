@@ -15,7 +15,7 @@ using webEscuela.Infrastructure.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 
 // ======================
-// 🔹 CONFIGURACIÓN GENERAL
+//  CONFIGURACIÓN GENERAL
 // ======================
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -28,7 +28,7 @@ builder.Services.AddSwaggerGen(c =>
         Description = "API para gestión escolar con autenticación JWT"
     });
 
-    // 🔐 Configuración de autenticación Bearer (JWT)
+    //  Configuración de autenticación Bearer (JWT)
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "Autenticación JWT usando el esquema Bearer.\n\n" +
@@ -56,7 +56,23 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // ======================
-// 🔹 BASE DE DATOS
+//  CONFIGURACIÓN DE CORS
+// ======================
+var corsPolicyName = "AllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod());// si el front envía cookies o auth headers
+        });
+});
+
+// ======================
+//  BASE DE DATOS
 // ======================
 var connection = builder.Configuration.GetConnectionString("ConnectionDefault");
 
@@ -64,7 +80,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connection, MySqlServerVersion.AutoDetect(connection)));
 
 // ======================
-// 🔹 CONFIGURACIÓN DE JWT
+//  CONFIGURACIÓN DE JWT
 // ======================
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -124,6 +140,8 @@ app.UseSwaggerUI(c =>
 // HTTPS y controladores
 app.UseHttpsRedirection();
 
+app.UseCors("AllowAll");
+
 // Si luego agregas autenticación/autorización, colócalo aquí:
 app.UseAuthentication();
 app.UseAuthorization();
@@ -140,3 +158,4 @@ app.MapGet("/health", () => Results.Ok(new
 
 
 app.Run();
+

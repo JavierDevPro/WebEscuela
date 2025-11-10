@@ -65,7 +65,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: corsPolicyName, policy =>
     {
-        policy.WithOrigins("http://localhost:3000") // 👈 URL de tu frontend Next.js
+        policy.WithOrigins("http://localhost:3000","https://school-manage-sigma.vercel.app") // 👈 URL de tu frontend Next.js
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials(); // si envías cookies o headers de auth
@@ -153,3 +153,4 @@ app.MapGet("/health", () => Results.Ok(new
 .AllowAnonymous();
 
 app.Run();
+
